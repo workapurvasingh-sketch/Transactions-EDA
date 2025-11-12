@@ -75,15 +75,15 @@ def perform_eda(df):
         # Time of day analysis
         def time_of_day(hour):
             if hour < 6:
-                return 'Early Morning'
+                return 'Early Morning (1-6 AM)'
             elif hour < 12:
-                return 'Morning'
+                return 'Morning (6 AM-12 PM)'
             elif hour < 18:
-                return 'Afternoon'
+                return 'Afternoon (12-6 PM)'
             elif hour < 22:
-                return 'Evening'
+                return 'Evening (6-10 PM)'
             else:
-                return 'Late Night'
+                return 'Late Night (10 PM-1 AM)'
 
         df['time_of_day'] = df['hour'].apply(time_of_day)
         insights['time_spending_overall'] = df.groupby('time_of_day')['amt'].agg(['sum', 'mean', 'count']).to_dict()
@@ -246,7 +246,8 @@ def create_plots(df, selected_wallets):
         # Time of day bar chart
         time_sum = df.groupby('time_of_day')['amt'].sum().reset_index()
         fig_time = px.bar(time_sum, x='time_of_day', y='amt', title=f'Spending by Time of Day - {selected_wallets[0]}',
-                         labels={'amt': 'Amount (INR)', 'time_of_day': 'Time of Day'})
+                         labels={'amt': 'Amount (INR)', 'time_of_day': 'Time of Day'},
+                         category_orders={'time_of_day': ['Early Morning (1-6 AM)', 'Morning (6 AM-12 PM)', 'Afternoon (12-6 PM)', 'Evening (6-10 PM)', 'Late Night (10 PM-1 AM)']})
         figs['time'] = fig_time
 
         # Weekend vs Weekday pie
@@ -324,7 +325,8 @@ def create_plots(df, selected_wallets):
         fig_time_by_user = px.bar(time_by_user, x='time_of_day', y='amt', color='WalletId',
                                  title='Time of Day Spending by User',
                                  labels={'amt': 'Amount (INR)', 'time_of_day': 'Time of Day', 'WalletId': 'User ID'},
-                                 color_discrete_map=wallet_color_map, barmode='group')
+                                 color_discrete_map=wallet_color_map, barmode='group',
+                                 category_orders={'time_of_day': ['Early Morning (1-6 AM)', 'Morning (6 AM-12 PM)', 'Afternoon (12-6 PM)', 'Evening (6-10 PM)', 'Late Night (10 PM-1 AM)']})
         figs['time_by_user'] = fig_time_by_user
 
         # 6. Weekend vs Weekday by user
